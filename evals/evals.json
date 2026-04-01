@@ -1,0 +1,53 @@
+{
+  "skill_name": "claude-skill-pencil-reader",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "offline-frame-search",
+      "prompt": "The Pencil desktop app is closed and I can't connect to the MCP. I need to quickly find all frames related to 'settings' in our design file at royalti-client-2.5/pencil/royalti-client.pen. What settings screens exist, and how many are there?",
+      "expected_output": "Lists all settings-related frames found via binary parsing. Should use offline mode scripts, not attempt MCP connection. Should check for sidecar map first.",
+      "assertions": [
+        {"id": "a0_uses_binary_or_map", "text": "Uses binary parser script or reads .map.md — does NOT attempt Pencil MCP connection"},
+        {"id": "a0_finds_settings_frames", "text": "Correctly identifies the settings screens (9.1 through 9.10 plus mobile variants)"},
+        {"id": "a0_correct_count", "text": "Reports approximately 10-11 unique settings screens (9.1-9.10 desktop + some mobile)"},
+        {"id": "a0_organized_output", "text": "Output is organized/grouped, not a raw flat dump of all frame names"}
+      ]
+    },
+    {
+      "id": 1,
+      "eval_name": "map-setup",
+      "prompt": "We have a Pencil design file at royalti-client-2.5/pencil/royalti-client.pen. I want to make sure we have a proper sidecar map for it so future sessions are fast. Can you check if a map exists and generate or update it as needed? The Pencil MCP is connected.",
+      "expected_output": "Checks for existing map file, finds it already exists, confirms or verifies it looks complete. Should NOT blindly regenerate from scratch.",
+      "assertions": [
+        {"id": "a1_checks_filesystem_first", "text": "Checks the pencil/ directory for an existing .map.md before attempting to generate"},
+        {"id": "a1_finds_existing_map", "text": "Correctly identifies that royalti-client.map.md already exists"},
+        {"id": "a1_correct_next_step", "text": "Recommends verifying/updating the existing map rather than regenerating from scratch"},
+        {"id": "a1_knows_generation_method", "text": "Mentions get_editor_state as the correct MCP-based generation method"}
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "pre-design-check",
+      "prompt": "I'm about to add a new Webhooks settings screen to our Pencil design file (royalti-client-2.5/pencil/royalti-client.pen). It would be screen 9.11. Before I start, can you check what settings screens already exist and give me the IDs I'll need to reference nearby frames?",
+      "expected_output": "Reads the sidecar map file to get settings frame IDs. Does NOT do a broad MCP query. Returns correct IDs for 9.x frames from the map.",
+      "assertions": [
+        {"id": "a2_reads_map_not_pen", "text": "Reads royalti-client.map.md (not the .pen binary or a broad MCP query)"},
+        {"id": "a2_no_broad_mcp_query", "text": "Does not suggest or perform a broad batch_get with patterns on the full document"},
+        {"id": "a2_lists_settings_with_ids", "text": "Lists settings frames (9.x) with their correct node IDs from the map"},
+        {"id": "a2_identifies_adjacent", "text": "Identifies 9.10 (Settings Delivery, ID: ECuDu) as the last existing settings screen before 9.11"}
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "no-map-setup",
+      "prompt": "I've just started working on the nso-to project. There's a Pencil design file at nso-to/pencil/nso-to.pen. Can you set up the sidecar map for it so we can work with it efficiently? The Pencil MCP is NOT connected — use offline mode.",
+      "expected_output": "Parses nso-to.pen offline, creates sidecar map at nso-to.map.md (not nso-to.pen.map.md), includes frame IDs, organizes by phase.",
+      "assertions": [
+        {"id": "a3_offline_mode", "text": "Uses offline binary parsing (no Pencil MCP connection attempted)"},
+        {"id": "a3_correct_filename", "text": "Creates map at correct sidecar path: nso-to.map.md (stem-only, no .pen in name)"},
+        {"id": "a3_includes_ids", "text": "Map includes node IDs for each frame (not just names)"},
+        {"id": "a3_organized", "text": "Map is organized by phase/section (not a flat dump)"}
+      ]
+    }
+  ]
+}

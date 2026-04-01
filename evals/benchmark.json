@@ -1,0 +1,103 @@
+{
+  "skill_name": "claude-skill-pencil-reader",
+  "iteration": 1,
+  "configs": [
+    {
+      "name": "with_skill",
+      "evals": [
+        {
+          "eval_id": 0,
+          "eval_name": "offline-frame-search",
+          "pass_rate": 1.0,
+          "assertions_passed": 4,
+          "assertions_total": 4,
+          "duration_ms": 38441,
+          "total_tokens": 25118
+        },
+        {
+          "eval_id": 1,
+          "eval_name": "map-setup",
+          "pass_rate": 1.0,
+          "assertions_passed": 4,
+          "assertions_total": 4,
+          "duration_ms": 60979,
+          "total_tokens": 26837
+        },
+        {
+          "eval_id": 2,
+          "eval_name": "pre-design-check",
+          "pass_rate": 1.0,
+          "assertions_passed": 4,
+          "assertions_total": 4,
+          "duration_ms": 44777,
+          "total_tokens": 24641
+        },
+        {
+          "eval_id": 3,
+          "eval_name": "no-map-setup",
+          "pass_rate": 0.75,
+          "assertions_passed": 3,
+          "assertions_total": 4,
+          "duration_ms": 71200,
+          "total_tokens": 32450
+        }
+      ],
+      "summary": {
+        "pass_rate": 0.9375,
+        "mean_duration_ms": 53849,
+        "mean_tokens": 27261
+      }
+    },
+    {
+      "name": "without_skill",
+      "evals": [
+        {
+          "eval_id": 0,
+          "eval_name": "offline-frame-search",
+          "pass_rate": 1.0,
+          "assertions_passed": 4,
+          "assertions_total": 4,
+          "duration_ms": 59434,
+          "total_tokens": 36826
+        },
+        {
+          "eval_id": 1,
+          "eval_name": "map-setup",
+          "pass_rate": 0.75,
+          "assertions_passed": 3,
+          "assertions_total": 4,
+          "duration_ms": 49629,
+          "total_tokens": 25856
+        },
+        {
+          "eval_id": 2,
+          "eval_name": "pre-design-check",
+          "pass_rate": 1.0,
+          "assertions_passed": 4,
+          "assertions_total": 4,
+          "duration_ms": 38441,
+          "total_tokens": 24504
+        },
+        {
+          "eval_id": 3,
+          "eval_name": "no-map-setup",
+          "pass_rate": 1.0,
+          "assertions_passed": 4,
+          "assertions_total": 4,
+          "duration_ms": 216753,
+          "total_tokens": 40830
+        }
+      ],
+      "summary": {
+        "pass_rate": 0.9375,
+        "mean_duration_ms": 91064,
+        "mean_tokens": 32004
+      }
+    }
+  ],
+  "delta": {
+    "pass_rate": "0.000",
+    "mean_duration_ms": "-37215",
+    "mean_tokens": "-4743"
+  }
+}
