@@ -10,6 +10,13 @@ allowed-tools:
   - mcp__pencil__get_screenshot
   - mcp__pencil__export_nodes
   - mcp__pencil__open_document
+  - mcp__pencil__snapshot_layout
+  - mcp__pencil__search_all_unique_properties
+  - mcp__pencil__replace_all_matching_properties
+  - mcp__pencil__get_style_guide_tags
+  - mcp__pencil__get_style_guide
+  - mcp__pencil__get_guidelines
+  - mcp__pencil__set_variables
   - Bash
   - Read
   - Write
@@ -237,9 +244,56 @@ batch_get(filePath, patterns: [{type: "frame"}], readDepth: 1)
 4. **`batch_get(nodeIds: [2–3 IDs], readDepth: 2–3)`** — inspect existing structure before editing
 5. **`find_empty_space_on_canvas`** — get coordinates for new frames; never place over existing content
 6. **`batch_design`** — build in chunks of max 25 ops; mark in-progress frames with `placeholder: true`
-7. **`get_screenshot`** — verify visually after each major section
-8. **Remove `placeholder: true`** — only when the frame is fully done
-9. **Update `[filename].map.md`** — immediately, if frames or components were added or removed
+7. **`snapshot_layout()`** — verify computed layout; catch 0px nodes before wasting a screenshot call (see layout verification below)
+8. **`get_screenshot`** — verify visually after each major section
+9. **Remove `placeholder: true`** — only when the frame is fully done
+10. **Update `[filename].map.md`** — immediately, if frames or components were added or removed
+
+### Layout verification with snapshot_layout
+
+Run `snapshot_layout(filePath)` after every `batch_design` call. It returns the computed x, y, width, height for every node after flexbox/grid resolution. A node that shows `width: 0` or `height: 0` is invisible — fix it before building content on top.
+
+Use `problemsOnly: true` to only see nodes with layout issues (clipped, overflowing). Use `maxDepth` to limit how deep it descends — `maxDepth: 0` returns only top-level layout (useful for canvas-level checks), omit for full depth.
+
+Common causes of 0px nodes:
+- Missing explicit dimensions on a non-flex child
+- A flex container with no children and no explicit size
+- Conflicting width values between parent and child
+
+If a scaffold is too broken to fix: delete the root frame and re-scaffold.
+
+### Token auditing with search_all_unique_properties
+
+Use `search_all_unique_properties` to audit consistency across the file. The `properties` parameter accepts these values: `fillColor`, `textColor`, `strokeColor`, `strokeThickness`, `cornerRadius`, `padding`, `gap`, `fontSize`, `fontFamily`, `fontWeight`.
+
+```
+// Find all colors in use — spot hardcoded hex values that should be tokens
+search_all_unique_properties(filePath, parents: ["root"], properties: ["fillColor", "textColor"])
+
+// Verify all text uses brand fonts
+search_all_unique_properties(filePath, parents: ["root"], properties: ["fontFamily"])
+
+// Audit spacing for grid compliance
+search_all_unique_properties(filePath, parents: ["root"], properties: ["gap", "padding"])
+```
+
+To bulk-replace a value across the entire file:
+```
+// Always search first to know what you're replacing
+replace_all_matching_properties(filePath, parents: ["root"], properties: {
+  fillColor: [{ from: "#oldHex", to: "#newHex" }]
+})
+```
+
+Each property type is a separate key in the `properties` object. To replace a color that appears as both `fillColor` and `textColor`, include both keys in a single call:
+```
+replace_all_matching_properties(filePath, parents: ["root"], properties: {
+  fillColor: [{ from: "#old", to: "#new" }],
+  textColor: [{ from: "#old", to: "#new" }]
+})
+```
+
+Always verify with `get_screenshot` after bulk replacements.
 
 ### Drift detection and repair
 
@@ -323,3 +377,90 @@ for section, frames in sections.items():
         print(f'  ... +{len(frames)-3} more')
 EOF
 ```
+
+---
+
+## Perceptual design defaults
+
+Science-backed lookup tables for consistent, professional-quality output. Use these whenever building or editing frames via `batch_design`. These are universal — they apply regardless of design system or brand.
+
+### Typography
+
+| Size range | Letter spacing | Line height | Notes |
+|------------|---------------|-------------|-------|
+| 56px+ (display) | −0.03em | 1.1× | Tight tracking for large headings |
+| 32–48px (heading) | −0.015em | 1.2× | Slightly tighter than default |
+| 14–18px (body) | normal | 1.5× minimum | Optimal line length: ~65 characters |
+| 10–12px (caption) | +0.015em | 1.4× | Wider tracking aids small-text legibility |
+
+Minimum font size: 10px. Below that, text becomes illegible on most screens.
+
+### Color
+
+| Rule | Value | Why |
+|------|-------|-----|
+| Disabled elements | 40% opacity | Not 50% — 40% reads as clearly inactive without being invisible |
+| Hover state | min 8% lightness delta from resting state | Below 8% is imperceptible on most monitors |
+| Body text on dark bg | `#E2E8F0` or `#F1F5F9` | Not pure white — reduces eye strain and halation |
+| Text contrast (WCAG AA) | 4.5:1 minimum | 3:1 acceptable for large text (24px+) |
+| Non-text contrast | 3:1 minimum | Icons, borders, form controls |
+
+### Motion
+
+| Scenario | Duration | Easing |
+|----------|----------|--------|
+| Floor (minimum perceptible) | 100ms | — |
+| Standard transitions | 200–300ms | cubic-bezier(0.4, 0, 0.2, 1) |
+| Enter/appear | 200ms | decelerate: cubic-bezier(0, 0, 0.2, 1) |
+| Exit/disappear | 150ms | accelerate: cubic-bezier(0.4, 0, 1, 1) |
+| Complex choreography | max 400ms | ease-in-out |
+
+### Spacing and touch targets
+
+| Element | Size |
+|---------|------|
+| Mobile touch target | 44 x 44px minimum |
+| Desktop click target | 24 x 24px minimum |
+| Primary buttons | 40–44px height |
+| Compact buttons | 32px height |
+| Card border radius | 8px max |
+| Button border radius | 6px |
+| Focus ring offset | 2px |
+
+### Icons
+
+| Rule | Value |
+|------|-------|
+| Minimum size | 16 x 16px |
+| Stroke weight (standard) | 1.5px |
+| Stroke weight (emphasis) | 2px |
+| Circle icons | Shift down 1px for optical centering |
+| Touch padding | Extend hit area to 44 x 44px |
+
+---
+
+## Common mistakes
+
+Pitfalls that waste tool calls or produce broken output. Check this list before starting a design session.
+
+| Mistake | Fix |
+|---------|-----|
+| Broad `batch_get` with `patterns: [{type: "frame"}]` on large files | Read the sidecar map first; pass specific `nodeIds` |
+| Skipping `snapshot_layout` after `batch_design` | Always verify computed layout before screenshotting — catch 0px nodes early |
+| Hardcoding hex colors instead of using design tokens | Call `get_variables()` first; use token values from the design file |
+| Exceeding 25 operations in a single `batch_design` | Break into multiple calls by logical section |
+| Placing new frames without checking empty space | Call `find_empty_space_on_canvas` before inserting |
+| Assuming file contents without reading | Always `batch_get` specific nodes before editing them |
+| Mixing multiple screens in one frame | Each screen gets its own top-level frame |
+| Not updating the sidecar map after adding/removing frames | Update `[filename].map.md` immediately after `batch_design` changes |
+| Retrying MCP calls when the WebSocket has dropped | Switch to offline mode; read the sidecar map or use binary parsing |
+| Using `batch_get` with `readDepth` > 3 | Starts returning massive payloads; use 2 for layout, 3 for children |
+
+---
+
+## References
+
+Additional reference files are included alongside this skill:
+
+- **`references/tool-reference.md`** — Complete parameter docs for all Pencil MCP tools with usage patterns
+- **`references/scaffolds.md`** — 9 layout archetype templates for common screen types

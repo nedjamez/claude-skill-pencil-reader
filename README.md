@@ -67,6 +67,9 @@ claude-skill-pencil-reader/
 ├── skills/
 │   └── pencil-reader/
 │       └── SKILL.md          <- The skill definition
+├── references/
+│   ├── tool-reference.md     <- Full Pencil MCP parameter docs
+│   └── scaffolds.md          <- 9 layout archetype templates
 ├── evals/
 │   ├── evals.json            <- 8 evaluation scenarios
 │   └── benchmark.json        <- Iteration 1 benchmark results
@@ -81,7 +84,11 @@ claude-skill-pencil-reader/
 - **Online mode** — MCP workflow with querying rules that prevent context overflow
 - **Offline mode** — Python scripts to search frames and extract IDs from the binary when the MCP is unavailable
 - **Sidecar map format** — standardized markdown template with update protocol
+- **Layout verification** — `snapshot_layout` after every build, token auditing with `search_all_unique_properties`
+- **Perceptual design defaults** — science-backed rules for typography, color, motion, spacing, icons
+- **Common mistakes** — 10 pitfalls that waste tool calls or produce broken output
 - **Tool scoping** — `allowed-tools` frontmatter limits which tools the skill can use
+- **Reference docs** — complete MCP tool parameter reference + 9 scaffold templates
 
 ## Benchmark results (iteration 1)
 
