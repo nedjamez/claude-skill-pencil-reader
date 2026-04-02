@@ -41,12 +41,60 @@
       "id": 3,
       "eval_name": "no-map-setup",
       "prompt": "I've just started working on the nso-to project. There's a Pencil design file at nso-to/pencil/nso-to.pen. Can you set up the sidecar map for it so we can work with it efficiently? The Pencil MCP is NOT connected — use offline mode.",
-      "expected_output": "Parses nso-to.pen offline, creates sidecar map at nso-to.map.md (not nso-to.pen.map.md), includes frame IDs, organizes by phase.",
+      "expected_output": "Parses nso-to.pen offline, creates sidecar map at nso-to.map.md (not nso-to.pen.map.md), includes frame IDs, organized by phase.",
       "assertions": [
         {"id": "a3_offline_mode", "text": "Uses offline binary parsing (no Pencil MCP connection attempted)"},
         {"id": "a3_correct_filename", "text": "Creates map at correct sidecar path: nso-to.map.md (stem-only, no .pen in name)"},
         {"id": "a3_includes_ids", "text": "Map includes node IDs for each frame (not just names)"},
         {"id": "a3_organized", "text": "Map is organized by phase/section (not a flat dump)"}
+      ]
+    },
+    {
+      "id": 4,
+      "eval_name": "drift-check-detection",
+      "prompt": "I have an existing sidecar map for royalti-client-2.5/pencil/royalti-client.pen. The map header says 'Total frames: 155' and 'Total reusable components: 77'. The Pencil MCP is connected. Before I start designing, can you verify the map is still accurate?",
+      "expected_output": "Runs drift check by calling get_editor_state and comparing counts against map header. If counts differ, identifies the delta and updates the map before proceeding.",
+      "assertions": [
+        {"id": "a4_reads_map_header", "text": "Reads the .map.md file first to get the stated counts (155 frames, 77 components)"},
+        {"id": "a4_calls_get_editor_state", "text": "Calls get_editor_state({ include_schema: false }) to get current MCP counts"},
+        {"id": "a4_compares_counts", "text": "Explicitly compares the map counts against the MCP-reported counts"},
+        {"id": "a4_handles_mismatch", "text": "If counts differ, identifies which frames were added/removed and updates the map before proceeding"}
+      ]
+    },
+    {
+      "id": 5,
+      "eval_name": "design-and-map-update",
+      "prompt": "I just used batch_design to add a new frame '9.11 — Settings Webhooks' to royalti-client-2.5/pencil/royalti-client.pen. The operation binding returned the new node ID 'XyZ99'. Can you update the sidecar map to reflect this addition?",
+      "expected_output": "Updates the sidecar map: adds the new frame row in the correct section (Settings, section 9), increments the total frame count in the header.",
+      "assertions": [
+        {"id": "a5_reads_current_map", "text": "Reads the current royalti-client.map.md before making changes"},
+        {"id": "a5_adds_row_correct_section", "text": "Adds '| XyZ99 | 9.11 — Settings Webhooks |' to the Settings section (section 9)"},
+        {"id": "a5_updates_count", "text": "Increments the 'Total frames' count in the map header by 1"},
+        {"id": "a5_preserves_existing", "text": "Does not modify or remove any existing rows in the map"}
+      ]
+    },
+    {
+      "id": 6,
+      "eval_name": "mcp-error-recovery",
+      "prompt": "I'm trying to work with royalti-client-2.5/pencil/royalti-client.pen but the Pencil MCP keeps dropping — get_editor_state times out. I need to find all frames in section 5 (Releases) and their IDs. Can you help?",
+      "expected_output": "Recognizes MCP is unavailable, falls back to offline mode. Reads the sidecar map (preferred) or uses binary parsing to find section 5 frames. Does not repeatedly retry failing MCP calls.",
+      "assertions": [
+        {"id": "a6_recognizes_mcp_down", "text": "Acknowledges the MCP connection issue rather than repeatedly retrying"},
+        {"id": "a6_falls_back_offline", "text": "Switches to offline mode — reads .map.md or uses binary parser scripts"},
+        {"id": "a6_prefers_map", "text": "Checks for and reads the sidecar map first (fastest offline path)"},
+        {"id": "a6_returns_section5_data", "text": "Returns the section 5 (Releases) frames with their IDs from the map"}
+      ]
+    },
+    {
+      "id": 7,
+      "eval_name": "wrong-map-name-detection",
+      "prompt": "I have a design file at nso-to/pencil/nso-to.pen. When I look in the pencil directory, I see both 'nso-to.map.md' and 'nso-to.pen.map.md'. Which one is correct and what should I do about the duplicate?",
+      "expected_output": "Identifies nso-to.map.md as the correct name (stem-only rule). Flags nso-to.pen.map.md as incorrectly named. Recommends deleting or merging the incorrect one.",
+      "assertions": [
+        {"id": "a7_knows_naming_rule", "text": "Cites the sidecar naming rule: strip .pen extension, use stem only"},
+        {"id": "a7_correct_file", "text": "Identifies nso-to.map.md as the correctly named file"},
+        {"id": "a7_flags_wrong_file", "text": "Flags nso-to.pen.map.md as incorrectly named (has .pen in the filename)"},
+        {"id": "a7_recommends_cleanup", "text": "Recommends deleting the incorrect file (after checking if it has unique content worth merging)"}
       ]
     }
   ]

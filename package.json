@@ -1,0 +1,30 @@
+{
+  "name": "claude-skill-pencil-reader",
+  "version": "1.0.0",
+  "description": "Sidecar index pattern for Pencil.dev .pen design files — prevents context overflow on large design files",
+  "author": "Royalti.io",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/royalti-io/claude-skill-pencil-reader"
+  },
+  "keywords": [
+    "claude-code",
+    "claude-skill",
+    "pencil",
+    "design",
+    "mcp",
+    "agent-skills"
+  ],
+  "scripts": {
+    "eval": "echo 'Run evals manually: copy skills/pencil-reader/SKILL.md to .claude/skills/pencil-reader/ then use Claude Code eval framework with evals/evals.json'",
+    "eval:report": "cat evals/benchmark.json | node -e \"const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));d.configs.forEach(c=>{console.log(c.name+': '+c.summary.pass_rate*100+'% pass, '+c.summary.mean_duration_ms+'ms avg, '+c.summary.mean_tokens+' tokens avg')})\""
+  },
+  "files": [
+    ".claude-plugin/",
+    "skills/",
+    "evals/",
+    "README.md",
+    "LICENSE"
+  ]
+}
