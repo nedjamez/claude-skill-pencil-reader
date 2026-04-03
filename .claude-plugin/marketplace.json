@@ -1,10 +1,23 @@
 {
-  "name": "pencil-reader-marketplace",
-  "description": "Pencil.dev design file skills for Claude Code",
+  "name": "nedjamez-claude-skill-pencil-reader",
+  "owner": {
+    "name": "Chinedum Okerengwor",
+    "url": "https://github.com/nedjamez"
+  },
   "plugins": [
     {
       "name": "pencil-reader",
-      "source": "."
+      "description": "Sidecar index pattern for Pencil.dev .pen design files — prevents context overflow on large design files",
+      "source": "./",
+      "version": "1.0.0",
+      "author": {
+        "name": "Royalti.io",
+        "url": "https://github.com/nedjamez"
+      },
+      "homepage": "https://github.com/nedjamez/claude-skill-pencil-reader",
+      "repository": "https://github.com/nedjamez/claude-skill-pencil-reader",
+      "license": "MIT",
+      "keywords": ["pencil", "design", "mcp", "sidecar-index", "pen-files"]
     }
   ]
 }
