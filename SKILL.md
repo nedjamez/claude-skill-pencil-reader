@@ -1,6 +1,6 @@
 ---
 name: pencil-reader
-description: Full workflow skill for Pencil.dev .pen design files — use this whenever working with a .pen file or the Pencil MCP, whether designing new screens, updating existing artboards, reading frame structure, searching for components, or recovering when the MCP connection is unstable. Covers both online mode (Pencil MCP connected: design, edit, screenshot) and offline mode (MCP down: search frames and components from binary). Always use this skill before making any Pencil MCP call — it prevents context overflow on large design files by enforcing a sidecar index pattern.
+description: "Full workflow skill for Pencil.dev .pen design files — use this whenever working with a .pen file or the Pencil MCP, whether designing new screens, updating existing artboards, reading frame structure, searching for components, or recovering when the MCP connection is unstable. Covers both online mode (Pencil MCP connected: design, edit, screenshot) and offline mode (MCP down: search frames and components from binary). Always use this skill before making any Pencil MCP call — it prevents context overflow on large design files by enforcing a sidecar index pattern."
 allowed-tools:
   - mcp__pencil__get_editor_state
   - mcp__pencil__batch_get
