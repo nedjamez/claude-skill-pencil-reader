@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Sidecar index pattern for Pencil.dev .pen design files — prevents context overflow on large design files by enforcing targeted MCP queries through a plain-markdown node map",
   "author": {
-    "name": "Royalti.io",
+    "name": "Chinedum Okerengwor",
     "url": "https://github.com/nedjamez"
   },
   "license": "MIT",
