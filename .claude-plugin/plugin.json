@@ -4,6 +4,6 @@
   "description": "Sidecar index pattern for Pencil.dev .pen design files — prevents context overflow on large design files by enforcing targeted MCP queries through a plain-markdown node map",
   "author": "Royalti.io",
   "license": "MIT",
-  "homepage": "https://github.com/royalti-io/claude-skill-pencil-reader",
+  "homepage": "https://github.com/nedjamez/claude-skill-pencil-reader",
   "keywords": ["pencil", "design", "mcp", "sidecar-index", "pen-files"]
 }

@@ -20,21 +20,19 @@ pencil/
 
 ### Option 1 — Claude Code plugin (recommended)
 
-From within Claude Code, add this repo as a plugin:
-
 ```bash
-# For local development (loads from cloned repo)
-claude --plugin-dir ./claude-skill-pencil-reader
+# Load directly from a local clone (session-only)
+claude --plugin-dir /path/to/claude-skill-pencil-reader
 
-# Or add to a marketplace, then install
-/plugin marketplace add your-org/your-marketplace
-/plugin install pencil-reader
+# Or install from a marketplace that includes this plugin
+claude plugin marketplace add nedjamez/claude-skill-pencil-reader
+claude plugin install pencil-reader
 ```
 
 ### Option 2 — Vercel skills CLI
 
 ```bash
-npx skills add royalti-io/claude-skill-pencil-reader
+npx skills add nedjamez/claude-skill-pencil-reader
 ```
 
 This symlinks the skill into `.claude/skills/pencil-reader/` automatically.
