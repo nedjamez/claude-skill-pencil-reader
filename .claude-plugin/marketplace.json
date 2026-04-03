@@ -1,0 +1,10 @@
+{
+  "name": "pencil-reader-marketplace",
+  "description": "Pencil.dev design file skills for Claude Code",
+  "plugins": [
+    {
+      "name": "pencil-reader",
+      "source": "."
+    }
+  ]
+}
